@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Контрол отправки экшен действий на Фейсбук</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+    <style>
+        .article_social2 {width:100%;}
+        .article_social2 TD {vertical-align:top;}
+
+        /* facebook bar */
+        .fb_app {padding:46px 0 0 0;font-size:95%;}
+        .fb_app P {margin:0 0 10px 0;}
+
+        .fb_bar {position:relative;width:240px;}
+        .fb_bar .settings {text-indent:-20000px;position:absolute;right:0;top:0;outline:none;display:block;width:14px;height:14px;background:url(//vdmsti.ru/img/social/fb_bar_setting.gif) no-repeat 0 0;text-decoration:none;}
+        .fb_bar IMG {float:left;margin:2px 10px 0 0;}
+        .fb_bar P {margin:0 0 5px 0;font-size:85%;}
+        .fb_bar #welcome P {font-size:95%;}
+        .fb_bar A {cursor:pointer;}
+        .fb_bar A.baloon_switcher {cursor:pointer;}
+        .fb_bar .name {font-size:115%;font-weight:bold;}
+        .fb_bar .auth {color:#666;}
+        .fb_bar #switch {float:left;}
+        .fb_bar #switch A {padding:0 0 0 16px;background-image:url(//vdmsti.ru/img/social/fb_switch.gif);background-repeat:no-repeat;text-decoration:none;}
+        .fb_bar .switch_on A {background-position:0 2px;}
+        .fb_bar .switch_off A {background-position:0 -23px;}
+        .fb_bar #switch A SPAN {border-bottom:1px dotted #036;color:#036;line-height:.9em;display:inline-block;}
+        .fb_bar #switch A:hover SPAN {border-bottom:1px dotted #923000;color:#923000;line-height:.9em;display:inline-block;}
+        .fb_bar .activity {float:right;}
+        .fb_bar .activity A {border-bottom:1px dotted #036;color:#036;text-decoration:none;line-height:.9em;display:inline-block;}
+        .fb_bar .activity A:hover {border-bottom:1px dotted #923000;color:#923000;line-height:.9em;display:inline-block;}
+
+        .fb_button {padding:0 0 0 20px;display:inline-block;background:#5f78ab url(/img/facebook-fb_app.gif) no-repeat 0 0;border:1px solid #29447e;}
+        .fb_button_text {display:inline-block;padding:2px 6px 3px;border-top:1px solid #879ac0;border-left:1px solid #405b91;font-weight:bold;color:#fff;}
+
+        .loading {background:url(//vdmsti.ru/img/social/fb_loader.gif) no-repeat scroll 50% 50% transparent;min-height:52px;}
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js"></script>
+    <script src="prototype.fbActionControl.js"></script>
+    <script src="cookies.js"></script>
+    <script>
+    (function($) {
+        window.fbVedAsyncInit = function() {
+            if (typeof( document.FBControl ) != 'undefined')
+                document.FBControl.init_control();
+            else {
+                if (typeof($.FBActionControl) == 'function') {
+                    document.FBControl = new $.FBActionControl("fb_bar");
+                    document.FBControl.init_control();
+                }
+            }
+        };
+    })(Prototype)
+    </script>
+
+</head>
+<body>
+<table class="article_social2">
+    <tbody>
+    <tr>
+        <td>
+            <div id="fb-root"></div>
+            <script type="text/javascript">
+                window.fbAsyncInit = function () {
+                    FB.init({appId:'247553682001',
+                        status: true, cookie: true, xfbml: true,oauth: true,
+                        channelUrl  : 'http://' + window.document.location.hostname + '/channel.html'});
+                    if (typeof(window.fbVedAsyncInit) == 'function'){
+                        window.fbVedAsyncInit();
+                    }
+                };
+                (function () {
+                    var e = document.createElement('script');
+                    e.type = 'text/javascript';
+                    e.src = document.location.protocol +
+                            '//connect.facebook.net/ru_RU/all.js';
+                    e.async = true;
+                    document.getElementById('fb-root').appendChild(e);
+                }());
+            </script>
+        </td>
+        <td class="fb_app">
+
+            <div id="fb_bar" class="fb_bar">
+                <div style="display:none;" class="user_info">
+                    <a title="Настройки" class="settings">Настройки</a>
+
+                    <div class="avatar"></div>
+                    <p class="name"></p>
+
+                    <p class="auth">Вы вошли с помощью Facebook</p>
+
+                    <p class="switch_on" id="switch"><a><span>Включен</span></a></p>
+
+                    <p class="activity"><a>Ваша активность</a></p>
+                </div>
+
+                <div style="display:none;" id="welcome">
+                    <p>Расскажите друзьям, какие материалы вы&nbsp;прочитали на&nbsp;сайте&nbsp;&mdash; для
+                        этого установите наше приложение</p>
+                    <a class="fb_button fb_button_medium"><span
+                            class="fb_button_text">Добавить приложение</span></a>
+                </div>
+
+                <div style="display:none;" id="activity">
+                    <div style="position:relative;">
+                        <div class="pimpa">&nbsp;</div>
+                    </div>
+                    <div class="fb_activity_baloon">
+                        <div class="last_articles">
+                            <p>Последние статьи</p>
+                            <div class="list_articles">
+                                <div class="header3" id="empty_activite">Список пуст</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:none;" id="settings">
+                    <div style="position:relative;">
+                        <div class="pimpa5">&nbsp;</div>
+                    </div>
+                    <div class="fb_setting_baloon">
+                        <a class="problem" target="_blank" href="http://www.vedomosti.ru/feedback.shtml">Сообщить о
+                            проблеме</a><br>
+                        <a class="logout">Выйти из Facebook</a><br>
+                        <a class="deleteapp">Удалить это приложение</a><br>
+                    </div>
+                </div>
+
+                <div style="display:none;" id="switcher_on">
+                    <div style="position:relative;">
+                        <div class="pimpa5">&nbsp;</div>
+                    </div>
+                    <div class="fb_switch_baloon">
+                        Трансляция включена
+                        <p><a class="baloon_switcher" title="Выключить">Выключить</a></p>
+                        <label class="radio_list"><input type="checkbox" checked="checked" class="radio"
+                                                         name="show_user_activity">
+
+                            <div class="radio_txt">Напоминать каждый раз, когда добавляется активность</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display:none;" id="switcher_off">
+                    <div style="position:relative;">
+                        <div class="pimpa5">&nbsp;</div>
+                    </div>
+                    <div class="fb_switch_baloon">
+                        Трансляция выключена
+                        <p><a class="baloon_switcher" title="Включить">Включить</a></p>
+                        <label class="radio_list"><input type="checkbox" checked="checked" class="radio"
+                                                         name="show_user_activity">
+
+                            <div class="radio_txt">Напоминать каждый раз, когда добавляется активность</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display:none;" id="added">
+                    <div style="position:relative;">
+                        <div class="pimpa5">&nbsp;</div>
+                    </div>
+                    <div class="fb_switch_baloon">
+                        Добавлено!<br>
+                        Теперь ваши друзья знают, что вы просматривали этот материал
+                        <p><input type="button" value="OK" class="btn2">&nbsp;&nbsp;&nbsp;<a>Удалить из
+                            активности</a></p>
+                        <label class="radio_list"><input type="checkbox" checked="checked" class="radio"
+                                                         name="show_user_activity">
+
+                            <div class="radio_txt">Напоминать каждый раз, когда добавляется активность</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var action_save = false;
+                var actionstartmarker_top = 0;
+                var actionstartmarker_offset = 0;
+
+                (function(prot) {
+                    if (typeof( document.FBControl ) != 'undefined')
+                        document.FBControl.init_control();
+                    else {
+                        var ctrlType = typeof(FBActionControl);
+                        if (typeof($.FBActionControl) == 'function') {
+                            document.FBControl = new $.FBActionControl("fb_bar");
+                            document.FBControl.init_control();
+                        }
+                    }
+
+                    function action_push() {
+                        if (typeof(document.FBControl) != 'undefined' && !action_save) {
+                            action_save = true;
+                            document.FBControl.FBActions.read.news(location.href);
+                        }
+                    }
+                    Event.observe(document.onresize ? document : window, "scroll", function() {
+                        if(!action_save && block_FBactions!=true){
+                            var height=document.viewport.getHeight();
+                            if (actionstartmarker_top==0) actionstartmarker_top=$('fb_bar').cumulativeOffset().top+150;
+                            if (height==0) {
+                                height = (!(document.documentElement.clientHeight) || (document.documentElement.clientHeight === 0)) ? document.body.clientHeight : document.documentElement.clientHeight;
+                            }
+                            if (height>actionstartmarker_top) {
+                                height = document.getElementsByTagName('body')[0].clientHeight;
+                            }
+                            var scroll=document.viewport.getScrollOffsets().top + height + actionstartmarker_offset;
+
+                            if (scroll>actionstartmarker_top) action_push();
+                        }
+                    });
+                })(Prototype)
+            </script>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
